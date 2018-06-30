@@ -21,4 +21,8 @@ TBD
 
 ###Running the Project
 
+- To run the frontend React app, navigate to `src/main/resources/webapp`
+    - Then run `npm start`
+- To run the Akka RESTful API, run the main app with [TBD]
+
 TBD
