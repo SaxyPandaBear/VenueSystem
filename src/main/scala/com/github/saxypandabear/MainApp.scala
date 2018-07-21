@@ -1,5 +1,8 @@
 package com.github.saxypandabear
 
+import java.io.FileInputStream
+import java.util.Properties
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
@@ -12,9 +15,25 @@ import scala.io.StdIn
 // starting code from
 // https://doc.akka.io/docs/akka-http/current/introduction.html#using-akka-http
 object MainApp {
+  // TODO: parameterize this eventually
+  private final val propertiesFileName = "environment-dev.properties"
+
   def main(args: Array[String]) {
 
-    implicit val system: ActorSystem = ActorSystem("my-system")
+    val (url, port) =
+      try {
+        val properties = new Properties()
+        properties.load(new FileInputStream(propertiesFileName))
+        (
+          properties.getProperty("url"),
+          properties.getProperty("port")
+        )
+      } catch { case e: Exception =>
+          e.printStackTrace()
+          sys.exit(1)
+      }
+
+    implicit val system: ActorSystem = ActorSystem("venue-system")
     implicit val materializer: ActorMaterializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext: ExecutionContextExecutor = system.dispatcher
@@ -26,7 +45,7 @@ object MainApp {
         }
       }
 
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
+    val bindingFuture = Http().bindAndHandle(route, , )
 
     println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return
